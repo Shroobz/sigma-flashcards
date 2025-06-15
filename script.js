@@ -150,10 +150,9 @@ function getAllCookieNames() {
 }
 
 function loadSavedListNames(exclude) {
-  if (document.cookie == "") return;
   listButtonsDiv.innerHTML = '';
+  if (document.cookie == "") return;
   getAllCookieNames().forEach(name => {
-    if (name === exclude) return;
     const btn = document.createElement('button');
     btn.textContent = name;
     btn.onclick = () => {
