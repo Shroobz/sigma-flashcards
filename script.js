@@ -149,10 +149,11 @@ function getAllCookieNames() {
   return document.cookie.split(';').map(c => decodeURIComponent(c.trim().split('=')[0]));
 }
 
-function loadSavedListNames() {
+function loadSavedListNames(exclude) {
   if (document.cookie == "") return;
   listButtonsDiv.innerHTML = '';
   getAllCookieNames().forEach(name => {
+    if (name === exclude) return;
     const btn = document.createElement('button');
     btn.textContent = name;
     btn.onclick = () => {
@@ -177,7 +178,6 @@ saveListBtn.addEventListener('click', () => {
   }
 
   saveList(name, content);
-  alert("List saved.");
 });
 
 deleteListBtn.addEventListener('click', () => {
@@ -187,8 +187,7 @@ deleteListBtn.addEventListener('click', () => {
     return;
   }
   document.cookie = encodeURIComponent(name) + '=; path=/; max-age=0';
-  loadSavedListNames();
-  alert("List deleted.");
+  loadSavedListNames(name);
 });
 
 loadSavedListNames();
