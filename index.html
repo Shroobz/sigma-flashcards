@@ -6,154 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flashcard Tester</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-light: #f4f4f9;
-      --text-light: #333;
-      --bg-dark: #1c1c1f;
-      --text-dark: #f4f4f9;
-      --card-bg-light: #ffffff;
-      --card-bg-dark: #2c2c34;
-      --accent: #339;
-      --button-bg: #0066cc;
-      --button-hover: #005bb5;
-      --border-color: #444;
-      --input-bg-dark: #3a3a42;
-      --input-border-dark: #555;
-    }
-
-    [data-theme="dark"],
-    [data-theme="dark"] body {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-    }
-
-    [data-theme="dark"] #input-area,
-    [data-theme="dark"] #test-interface {
-      background-color: var(--card-bg-dark);
-      color: var(--text-dark);
-    }
-
-    [data-theme="dark"] textarea,
-    [data-theme="dark"] input[type="text"],
-    [data-theme="dark"] #answer {
-      background-color: var(--input-bg-dark);
-      border: 1px solid var(--input-border-dark);
-      color: var(--text-dark);
-    }
-
-    #raw-input {
-      height: 150px;
-      max-width: 900px;
-      max-height: 300px;
-    }
-
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-light);
-      color: var(--text-light);
-    }
-
-    h1 {
-      text-align: center;
-      color: var(--accent);
-      margin-top: 20px;
-    }
-
-    #input-area,
-    #test-interface {
-      max-width: 900px;
-      margin: 20px auto;
-      background: var(--card-bg-light);
-      padding: 30px;
-      border-radius: 14px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    textarea,
-    input[type="text"],
-    #answer {
-      width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin: 10px 0;
-      box-sizing: border-box;
-    }
-
-    button {
-      padding: 10px 20px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background-color: var(--button-bg);
-      color: white;
-      margin: 5px;
-    }
-
-    button:hover {
-      background-color: var(--button-hover);
-    }
-
-    #card {
-      margin: 20px 0;
-      font-size: 1.2rem;
-      padding: 16px;
-      background: #eef;
-      border-left: 4px solid var(--accent);
-      border-radius: 8px;
-      transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-    }
-
-    [data-theme="dark"] #card {
-      background-color: #3a3a4a;
-      border-left-color: var(--accent);
-    }
-
-    #confirm-area {
-      margin-top: 20px;
-      text-align: center;
-      display: none;
-    }
-
-    #progress {
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    .confirm-btn {
-      font-size: 1.5rem;
-      width: 3rem;
-      height: 3rem;
-      border-radius: 50%;
-      background-color: #ddd;
-      color: #222;
-      margin: 0 10px;
-    }
-
-    .confirm-btn:hover {
-      background-color: #bbb;
-    }
-
-    #list-buttons button {
-      margin: 5px 5px 0 0;
-    }
-
-    #theme-toggle {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
-      background-color: #444;
-    }
-  </style>
+  <link href="style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -167,6 +20,10 @@
     <button id="delete-list-btn">Delete List</button>
     <button id="start-btn">Start Test</button>
     <button id="resume-session-btn">Resume Last Session</button>
+    <select id="answer-mode">
+      <option value="definition">Answer with definition</option>
+      <option value="term">Answer with term</option>
+    </select>
 
     <div id="saved-lists-div">
       <h3>Load Saved List:</h3>

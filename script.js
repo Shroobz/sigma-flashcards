@@ -21,12 +21,18 @@ const confirmNo = document.getElementById('confirm-no');
 const progressEl = document.getElementById('progress');
 const listButtonsDiv = document.getElementById('list-buttons') || document.getElementById('saved-lists');
 const homeBtnArea = document.getElementById('home-btn-area');
+const answerModeBtn = document.getElementById('answer-mode');
 
 function parseInput(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   return lines.map(line => {
-    const [term, definition] = line.split('=').map(s => s.trim());
-    return term && definition ? { term, definition } : null;
+    if (answerModeBtn.value == "definition") {
+      const [term, definition] = line.split('=').map(s => s.trim());
+      return term && definition ? { term, definition } : null;
+    } else {
+      const [definition, term] = line.split('=').map(s => s.trim());
+      return term && definition ? { term, definition } : null;
+    }
   }).filter(Boolean);
 }
 
@@ -74,7 +80,7 @@ submitBtn.addEventListener('click', () => {
     cards.splice(currentIndex, 1);
     animateOutAndNext(nextCard);
   } else {
-    confirmText.textContent = `Your answer: "${userAns}". Is this correct for '${cards[currentIndex].term}': '${correctAns}'`;
+    confirmText.textContent = `Your answer: "${userAns}". Is this correct for '${correctAns}'`;
     document.getElementById('answer-area').style.display = 'none';
     confirmArea.style.display = 'block';
     confirmYes.focus();
