@@ -76,7 +76,7 @@ function nextCard() {
 submitBtn.addEventListener('click', () => {
   const userAns = answerInput.value.trim();
   const correctAns = cards[currentIndex].definition;
-  if (userAns === correctAns) {
+  if (userAns.toLowerCase() === correctAns.toLowerCase()) {
     cards.splice(currentIndex, 1);
     animateOutAndNext(nextCard);
   } else {
