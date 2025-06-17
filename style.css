@@ -1,7 +1,7 @@
 :root {
   --bg-light: #f4f4f9;
   --text-light: #333;
-  --bg-dark: #1c1c1f;
+  --bg-dark: linear-gradient(105deg, #40464b, #3c383f, #383737);
   --text-dark: #f4f4f9;
   --card-bg-light: #ffffff;
   --card-bg-dark: #2c2c34;
