@@ -1,3 +1,5 @@
+
+let sessionStarted = false;
 // script.js
 let cards = [];
 let currentIndex = -1;
@@ -22,6 +24,7 @@ const progressEl = document.getElementById('progress');
 const listButtonsDiv = document.getElementById('list-buttons') || document.getElementById('saved-lists');
 const homeBtnArea = document.getElementById('home-btn-area');
 const answerModeBtn = document.getElementById('answer-mode');
+const answerArea = document.getElementById('answer-area');
 
 function parseInput(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
@@ -58,6 +61,8 @@ function animateOutAndNext(callback) {
 }
 
 function nextCard() {
+  if (!sessionStarted) return;
+  console.log(cards.length)
   if (cards.length === 0) {
     localStorage.removeItem('flashcard-session');
     testInterface.innerHTML = '<h2 style="text-align:center;">Well done! All cards completed.</h2>';
@@ -69,7 +74,7 @@ function nextCard() {
   currentTermEl.textContent = cards[currentIndex].term;
   answerInput.value = '';
   answerInput.focus();
-  document.getElementById('answer-area').style.display = 'block';
+  answerArea.style.display = 'block';
   confirmArea.style.display = 'none';
 }
 
@@ -81,7 +86,7 @@ submitBtn.addEventListener('click', () => {
     animateOutAndNext(nextCard);
   } else {
     confirmText.textContent = `Your answer: "${userAns}". Is this correct for '${correctAns}'`;
-    document.getElementById('answer-area').style.display = 'none';
+    answerArea.style.display = 'none';
     confirmArea.style.display = 'block';
     confirmYes.focus();
   }
@@ -114,6 +119,7 @@ confirmNo.addEventListener('click', () => {
 });
 
 startBtn.addEventListener('click', () => {
+  console.log("hi")
   cards = parseInput(rawInput.value);
   if (cards.length === 0) {
     alert('No valid entries found. Use format term = definition per line.');
@@ -122,6 +128,7 @@ startBtn.addEventListener('click', () => {
   localStorage.setItem('flashcard-session', JSON.stringify(cards));
   inputArea.style.display = 'none';
   testInterface.style.display = 'block';
+  sessionStarted = true;
   nextCard();
 });
 
@@ -134,6 +141,7 @@ resumeBtn.addEventListener('click', () => {
   cards = JSON.parse(sessionData);
   inputArea.style.display = 'none';
   testInterface.style.display = 'block';
+  sessionStarted = true;
   nextCard();
 });
 
@@ -183,16 +191,6 @@ saveListBtn.addEventListener('click', () => {
   }
 
   saveList(name, content);
-});
-
-deleteListBtn.addEventListener('click', () => {
-  const name = listNameInput.value.trim();
-  if (!name) {
-    alert("Provide a list name to delete.");
-    return;
-  }
-  document.cookie = encodeURIComponent(name) + '=; path=/; max-age=0';
-  loadSavedListNames(name);
 });
 
 loadSavedListNames();
