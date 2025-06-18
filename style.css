@@ -11,7 +11,7 @@
   --select-hover: #003d8c; /* Should be a bit different from button-hover */
   --border-color: #444;
   --input-bg-dark: #3a3a42;
-  --input-border-dark: #555
+  --input-border-dark: #555;
 }
 
 [data-theme="dark"],
@@ -149,6 +149,14 @@ select:hover {
   position: fixed;
   top: 10px;
   right: 10px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  background-color: #444;
+}
+#home-btn {
+  position: fixed;
+  top: 10px;
+  right: 140px;
   padding: 6px 12px;
   font-size: 0.9rem;
   background-color: #444;

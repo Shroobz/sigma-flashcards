@@ -25,6 +25,7 @@ const listButtonsDiv = document.getElementById('list-buttons') || document.getEl
 const homeBtnArea = document.getElementById('home-btn-area');
 const answerModeBtn = document.getElementById('answer-mode');
 const answerArea = document.getElementById('answer-area');
+const homeBtn = document.getElementById('home-btn');
 
 function parseInput(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
@@ -81,7 +82,11 @@ function nextCard() {
 submitBtn.addEventListener('click', () => {
   const userAns = answerInput.value.trim();
   const correctAns = cards[currentIndex].definition;
-  if (userAns.toLowerCase() === correctAns.toLowerCase()) {
+  let withoutBracketsAns = correctAns.toLowerCase().replace(/\([^()]*\)/g, '').replace(/\s/g, '').replace("(", "").replace(")", "");
+  let withoutBracketsUserAns = userAns.toLowerCase().replace(/\([^()]*\)/g, '').replace(/\s/g, '').replace("(", "").replace(")", "");
+  let withBracketsAns = correctAns.toLowerCase().replace(/\s/g, '').replace("(", "").replace(")", "");
+  let withBracketsUserAns = userAns.toLowerCase().replace(/\s/g, '').replace("(", "").replace(")", "")
+  if (withoutBracketsUserAns === withoutBracketsAns || withBracketsUserAns === withBracketsAns) {
     cards.splice(currentIndex, 1);
     animateOutAndNext(nextCard);
   } else {
@@ -143,6 +148,22 @@ resumeBtn.addEventListener('click', () => {
   testInterface.style.display = 'block';
   sessionStarted = true;
   nextCard();
+});
+
+homeBtn.addEventListener('click', () => {
+  inputArea.style.display = 'block';
+  testInterface.style.display = 'none';
+  sessionStarted = false;
+  cards = [];
+  currentIndex = -1;
+  rawInput.value = '';
+  listNameInput.value = '';
+  answerInput.value = '';
+  confirmArea.style.display = 'none';
+  homeBtnArea.style.display = 'none';
+  progressEl.textContent = '';
+  localStorage.removeItem('flashcard-session');
+  loadSavedListNames();
 });
 
 function saveList(name, content) {
