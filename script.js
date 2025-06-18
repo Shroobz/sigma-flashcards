@@ -104,6 +104,18 @@ answerInput.addEventListener('keydown', e => {
   }
 });
 
+deleteListBtn.addEventListener('click', () => {
+  const name = listNameInput.value.trim();
+  if (!name) {
+    alert("List name required to delete.");
+    return;
+  }
+  if (confirm(`Are you sure you want to delete the list "${name}"?`)) {
+    document.cookie = encodeURIComponent(name) + '=;path=/;max-age=0';
+    loadSavedListNames();
+    listNameInput.value = '';
+  }
+});
 document.addEventListener('keydown', e => {
   if (confirmArea.style.display !== 'none') {
     if (e.key.toLowerCase() === 'v') confirmYes.click();
