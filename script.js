@@ -33,9 +33,16 @@ function parseInput(text) {
     if (answerModeBtn.value == "definition") {
       const [term, definition] = line.split('=').map(s => s.trim());
       return term && definition ? { term, definition } : null;
-    } else {
+    } else if (answerModeBtn.value == "term") {
       const [definition, term] = line.split('=').map(s => s.trim());
       return term && definition ? { term, definition } : null;
+    } else if (answerModeBtn.value == "both") {
+      const parts = line.split('=').map(s => s.trim());
+      if (parts.length === 2) {
+        return { term: parts[0], definition: parts[1] };
+      } else if (parts.length === 1) {
+        return { term: parts[0], definition: parts[0] }; // If only one part, use it for both
+      } 
     }
   }).filter(Boolean);
 }
@@ -86,7 +93,7 @@ submitBtn.addEventListener('click', () => {
   let withoutBracketsUserAns = userAns.toLowerCase().replace(/\([^()]*\)/g, '').replace(/\s/g, '').replace("(", "").replace(")", "");
   let withBracketsAns = correctAns.toLowerCase().replace(/\s/g, '').replace("(", "").replace(")", "");
   let withBracketsUserAns = userAns.toLowerCase().replace(/\s/g, '').replace("(", "").replace(")", "")
-  if (withoutBracketsUserAns === withoutBracketsAns || withBracketsUserAns === withBracketsAns) {
+  if (levenshtein(withBracketsUserAns, withBracketsAns) <= 2 || levenshtein(withoutBracketsUserAns, withoutBracketsAns) <= 2) {
     cards.splice(currentIndex, 1);
     animateOutAndNext(nextCard);
   } else {
@@ -227,3 +234,101 @@ saveListBtn.addEventListener('click', () => {
 });
 
 loadSavedListNames();
+
+// Levenshtein distance function for string comparison
+function levenshtein(s, t) {
+  if (s === t) {
+    return 0;
+  }
+  var n = s.length, m = t.length;
+  if (n === 0 || m === 0) {
+    return n + m;
+  }
+  var x = 0, y, a, b, c, d, g, h;
+  var p = new Uint16Array(n);
+  var u = new Uint32Array(n);
+  for (y = 0; y < n;) {
+    u[y] = s.charCodeAt(y);
+    p[y] = ++y;
+  }
+
+  for (; (x + 3) < m; x += 4) {
+    var e1 = t.charCodeAt(x);
+    var e2 = t.charCodeAt(x + 1);
+    var e3 = t.charCodeAt(x + 2);
+    var e4 = t.charCodeAt(x + 3);
+    c = x;
+    b = x + 1;
+    d = x + 2;
+    g = x + 3;
+    h = x + 4;
+    for (y = 0; y < n; y++) {
+      a = p[y];
+      if (a < c || b < c) {
+        c = (a > b ? b + 1 : a + 1);
+      }
+      else {
+        if (e1 !== u[y]) {
+          c++;
+        }
+      }
+
+      if (c < b || d < b) {
+        b = (c > d ? d + 1 : c + 1);
+      }
+      else {
+        if (e2 !== u[y]) {
+          b++;
+        }
+      }
+
+      if (b < d || g < d) {
+        d = (b > g ? g + 1 : b + 1);
+      }
+      else {
+        if (e3 !== u[y]) {
+          d++;
+        }
+      }
+
+      if (d < g || h < g) {
+        g = (d > h ? h + 1 : d + 1);
+      }
+      else {
+        if (e4 !== u[y]) {
+          g++;
+        }
+      }
+      p[y] = h = g;
+      g = d;
+      d = b;
+      b = c;
+      c = a;
+    }
+  }
+
+  for (; x < m;) {
+    var e = t.charCodeAt(x);
+    c = x;
+    d = ++x;
+    for (y = 0; y < n; y++) {
+      a = p[y];
+      if (a < c || d < c) {
+        d = (a > d ? d + 1 : a + 1);
+      }
+      else {
+        if (e !== u[y]) {
+          d = c + 1;
+        }
+        else {
+          d = c;
+        }
+      }
+      p[y] = d;
+      c = a;
+    }
+    h = d;
+  }
+
+  return h;
+}
