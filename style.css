@@ -11,7 +11,7 @@
   --select-hover: #003d8c; /* Should be a bit different from button-hover */
   --border-color: #444;
   --input-bg-dark: #3a3a42;
-  --input-border-dark: #555;
+  --input-border-dark: #555
 }
 
 [data-theme="dark"],
