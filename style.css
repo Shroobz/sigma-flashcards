@@ -14,7 +14,7 @@
   --input-border-dark: #555;
 }
 
-[data-theme="dark"],
+
 [data-theme="dark"] body {
   background: linear-gradient(105deg, #40464b, #3c383f, #383737);
   color: var(--text-dark);
@@ -41,8 +41,9 @@
 }
 
 
-html,
 body {
+  width: 100vw;
+  height: 100vw;
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
@@ -62,8 +63,8 @@ h1 {
   margin: 20px auto;
   background: var(--card-bg-light);
   padding: 30px;
-  border-radius: 14px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 48px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
 }
 
 textarea,

@@ -29,6 +29,14 @@ const homeBtn = document.getElementById('home-btn');
 
 function parseInput(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  if (answerModeBtn.value == "both") {
+    answerModeBtn.value = "definition"
+    let arr1 = parseInput(text)
+    answerModeBtn.value = "term"
+    let arr2 = parseInput(text)
+    answerModeBtn.value = "both"
+    return arr1.concat(arr2)
+  }
   return lines.map(line => {
     if (answerModeBtn.value == "definition") {
       const [term, definition] = line.split('=').map(s => s.trim());
@@ -36,13 +44,6 @@ function parseInput(text) {
     } else if (answerModeBtn.value == "term") {
       const [definition, term] = line.split('=').map(s => s.trim());
       return term && definition ? { term, definition } : null;
-    } else if (answerModeBtn.value == "both") {
-      const parts = line.split('=').map(s => s.trim());
-      if (parts.length === 2) {
-        return { term: parts[0], definition: parts[1] };
-      } else if (parts.length === 1) {
-        return { term: parts[0], definition: parts[0] }; // If only one part, use it for both
-      } 
     }
   }).filter(Boolean);
 }
@@ -108,7 +109,7 @@ answerInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     e.preventDefault();
     submitBtn.click();
-  }
+  w}
 });
 
 deleteListBtn.addEventListener('click', () => {
@@ -118,7 +119,17 @@ deleteListBtn.addEventListener('click', () => {
     return;
   }
   if (confirm(`Are you sure you want to delete the list "${name}"?`)) {
-    document.cookie = encodeURIComponent(name) + '=;path=/;max-age=0';
+    let save = localStorage.getItem("lists");
+    if (save == null) return;
+    save = JSON.parse(save);
+    for (let i = 0; i < save.length; i++) {
+      if (save[i].name == name) {
+        console.log("deleting at " + i)
+        save.splice(i,1)
+        break;
+      }
+    }
+    localStorage.setItem("lists", JSON.stringify(save))
     loadSavedListNames();
     listNameInput.value = '';
   }
@@ -186,11 +197,36 @@ homeBtn.addEventListener('click', () => {
 });
 
 function saveList(name, content) {
-  document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(content) + ';path=/;max-age=31536000';
+  if (getAllCookieNames().includes(name)) {
+    alert("that name is taken!")
+    return;
+  }
+  let input = { name, content }
+  let save = localStorage.getItem("lists")
+  if (save == null) {
+    save = [input]
+  } else {
+    save = JSON.parse(save)
+    save.push(input)
+  }
+  console.log(save)
+  localStorage.setItem("lists", JSON.stringify(save))
   loadSavedListNames();
 }
 
 function getCookie(name) {
+  if (!getAllCookieNames().includes(name)) return null;
+  let save = localStorage.getItem("lists")
+  if (save != null) {
+    save = JSON.parse(save)
+    for (let i = 0; i < save.length; i++) {
+      if (save[i].name == name) return save[i].content
+    }
+  }
+  return null;
+}
+
+function getCookieOldAndBad(name) {
   const decoded = decodeURIComponent(document.cookie);
   const pairs = decoded.split(';').map(c => c.trim());
   for (const pair of pairs) {
@@ -200,17 +236,41 @@ function getCookie(name) {
 }
 
 function getAllCookieNames() {
-  return document.cookie.split(';').map(c => decodeURIComponent(c.trim().split('=')[0]));
+  let names = []
+  let save = localStorage.getItem("lists")
+  if (save != null) {
+    save = JSON.parse(save)
+    save.forEach(list => {
+      names.push(list.name)
+    })
+  }
+  return names
 }
 
 function loadSavedListNames(exclude) {
+  if (document.cookie != "") {
+    console.log("shit how i do")
+    let cookies = document.cookie.split(';').map(c => decodeURIComponent(c.trim().split('=')[0]));
+    let save = localStorage.getItem("lists");
+    save = (save == null) ? [] : JSON.parse(save)
+
+    cookies.forEach(name => {
+      let content = decodeURIComponent(getCookieOldAndBad(name))
+      let input = {name,content}
+      save.push(input)
+      
+    })
+    localStorage.setItem("lists", JSON.stringify(save))
+  }
+
+
   listButtonsDiv.innerHTML = '';
-  if (document.cookie == "") return;
+  if (localStorage.getItem("lists") == null) return;
   getAllCookieNames().forEach(name => {
     const btn = document.createElement('button');
     btn.textContent = name;
     btn.onclick = () => {
-      rawInput.value = decodeURIComponent(getCookie(name));
+      rawInput.value = getCookie(name);
       listNameInput.value = name;
     };
     listButtonsDiv.appendChild(btn);
@@ -235,100 +295,3 @@ saveListBtn.addEventListener('click', () => {
 
 loadSavedListNames();
 
-// Levenshtein distance function for string comparison
-function levenshtein(s, t) {
-  if (s === t) {
-    return 0;
-  }
-  var n = s.length, m = t.length;
-  if (n === 0 || m === 0) {
-    return n + m;
-  }
-  var x = 0, y, a, b, c, d, g, h;
-  var p = new Uint16Array(n);
-  var u = new Uint32Array(n);
-  for (y = 0; y < n;) {
-    u[y] = s.charCodeAt(y);
-    p[y] = ++y;
-  }
-
-  for (; (x + 3) < m; x += 4) {
-    var e1 = t.charCodeAt(x);
-    var e2 = t.charCodeAt(x + 1);
-    var e3 = t.charCodeAt(x + 2);
-    var e4 = t.charCodeAt(x + 3);
-    c = x;
-    b = x + 1;
-    d = x + 2;
-    g = x + 3;
-    h = x + 4;
-    for (y = 0; y < n; y++) {
-      a = p[y];
-      if (a < c || b < c) {
-        c = (a > b ? b + 1 : a + 1);
-      }
-      else {
-        if (e1 !== u[y]) {
-          c++;
-        }
-      }
-
-      if (c < b || d < b) {
-        b = (c > d ? d + 1 : c + 1);
-      }
-      else {
-        if (e2 !== u[y]) {
-          b++;
-        }
-      }
-
-      if (b < d || g < d) {
-        d = (b > g ? g + 1 : b + 1);
-      }
-      else {
-        if (e3 !== u[y]) {
-          d++;
-        }
-      }
-
-      if (d < g || h < g) {
-        g = (d > h ? h + 1 : d + 1);
-      }
-      else {
-        if (e4 !== u[y]) {
-          g++;
-        }
-      }
-      p[y] = h = g;
-      g = d;
-      d = b;
-      b = c;
-      c = a;
-    }
-  }
-
-  for (; x < m;) {
-    var e = t.charCodeAt(x);
-    c = x;
-    d = ++x;
-    for (y = 0; y < n; y++) {
-      a = p[y];
-      if (a < c || d < c) {
-        d = (a > d ? d + 1 : a + 1);
-      }
-      else {
-        if (e !== u[y]) {
-          d = c + 1;
-        }
-        else {
-          d = c;
-        }
-      }
-      p[y] = d;
-      c = a;
-    }
-    h = d;
-  }
-
-  return h;
-}
