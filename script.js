@@ -248,7 +248,7 @@ function getAllCookieNames() {
 }
 
 function loadSavedListNames(exclude) {
-  if (document.cookie != "") {
+  if (document.cookie != "" && localStorage.getItem("lists") == null) {
     console.log("shit how i do")
     let cookies = document.cookie.split(';').map(c => decodeURIComponent(c.trim().split('=')[0]));
     let save = localStorage.getItem("lists");
