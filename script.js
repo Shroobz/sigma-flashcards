@@ -93,7 +93,7 @@ submitBtn.addEventListener('click', () => {
   let withoutBracketsUserAns = userAns.toLowerCase().replace(/\([^()]*\)/g, '').replace(/\s/g, '').replace("(", "").replace(")", "");
   let withBracketsAns = correctAns.toLowerCase().replace(/\s/g, '').replace("(", "").replace(")", "");
   let withBracketsUserAns = userAns.toLowerCase().replace(/\s/g, '').replace("(", "").replace(")", "")
-  if (levenshtein(withBracketsUserAns, withBracketsAns) <= 2 || levenshtein(withoutBracketsUserAns, withoutBracketsAns) <= 2) {
+  if (withBracketsUserAns == WithBracketsAns || withoutBracketsUserAns == withoutBracketsAns) {
     cards.splice(currentIndex, 1);
     animateOutAndNext(nextCard);
   } else {
