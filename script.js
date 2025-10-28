@@ -66,6 +66,7 @@ function animateOutAndNext(callback) {
       cardEl.style.transform = 'translateX(0)';
       cardEl.style.opacity = '1';
     }, 20);
+    answerInput.focus();
   }, 400);
 }
 
@@ -109,7 +110,7 @@ answerInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     e.preventDefault();
     submitBtn.click();
-  w}
+  }
 });
 
 deleteListBtn.addEventListener('click', () => {
@@ -285,10 +286,6 @@ saveListBtn.addEventListener('click', () => {
     return;
   }
 
-  if (new Blob([name, content]).size > 4096) {
-    alert("List is too large. Please reduce size or split into multiple parts.");
-    return;
-  }
 
   saveList(name, content);
 });
