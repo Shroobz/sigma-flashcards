@@ -182,19 +182,24 @@ resumeBtn.addEventListener('click', () => {
 });
 
 homeBtn.addEventListener('click', () => {
-  inputArea.style.display = 'block';
-  testInterface.style.display = 'none';
-  sessionStarted = false;
-  cards = [];
-  currentIndex = -1;
-  rawInput.value = '';
-  listNameInput.value = '';
-  answerInput.value = '';
-  confirmArea.style.display = 'none';
-  homeBtnArea.style.display = 'none';
-  progressEl.textContent = '';
-  localStorage.removeItem('flashcard-session');
-  loadSavedListNames();
+  if (sessionStarted == true) {
+    inputArea.style.display = 'block';
+    testInterface.style.display = 'none';
+    sessionStarted = false;
+    cards = [];
+    currentIndex = -1;
+    rawInput.value = '';
+    listNameInput.value = '';
+    answerInput.value = '';
+    confirmArea.style.display = 'none';
+    homeBtnArea.style.display = 'none';
+    progressEl.textContent = '';
+    localStorage.removeItem('flashcard-session');
+    loadSavedListNames();
+  } else {
+
+    window.location.href = "https://shroobz.github.io/"
+  }
 });
 
 function saveList(name, content) {
