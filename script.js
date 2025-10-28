@@ -194,7 +194,6 @@ homeBtn.addEventListener('click', () => {
     confirmArea.style.display = 'none';
     homeBtnArea.style.display = 'none';
     progressEl.textContent = '';
-    localStorage.removeItem('flashcard-session');
     loadSavedListNames();
   } else {
 
