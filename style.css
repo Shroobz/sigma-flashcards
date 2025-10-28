@@ -1,37 +1,15 @@
 :root {
-  --bg-light: #f4f4f9;
-  --text-light: #333;
-  --text-dark: #f4f4f9;
-  --card-bg-light: #ffffff;
-  --card-bg-dark: #2c2c34;
+  --text: #b0ffb4;
+  --menu-bg: #2c2c34f1;
+  --card-color: #2b2629;
   --accent: #339;
   --button-bg: #0066cc;
-  --button-hover: #005bb5;
-  --select-bg: #004aa4; /* Should be a bit different from button-bg */
-  --select-hover: #003d8c; /* Should be a bit different from button-hover */
+  --button-hover: #014d99;
+  --select-bg: #1c66b1; /* Should be a bit different from button-bg */
+  --select-hover: #0f5397; /* Should be a bit different from button-hover */
   --border-color: #444;
-  --input-bg-dark: #3a3a42;
-  --input-border-dark: #555;
-}
-
-
-[data-theme="dark"] body {
-  background: linear-gradient(105deg, #40464b, #3c383f, #383737);
-  color: var(--text-dark);
-}
-
-[data-theme="dark"] #input-area,
-[data-theme="dark"] #test-interface {
-  background-color: var(--card-bg-dark);
-  color: var(--text-dark);
-}
-
-[data-theme="dark"] textarea,
-[data-theme="dark"] input[type="text"],
-[data-theme="dark"] #answer {
-  background-color: var(--input-bg-dark);
-  border: 1px solid var(--input-border-dark);
-  color: var(--text-dark);
+  --input-bg: #3a3a42;
+  --input-border: #5c5959;
 }
 
 #raw-input {
@@ -47,8 +25,8 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
-  background-color: var(--bg-light);
-  color: var(--text-light);
+  background: linear-gradient(105deg, #26292c, #29262c, #2c2a2a);
+  color: var(--text);
 }
 
 h1 {
@@ -61,10 +39,11 @@ h1 {
 #test-interface {
   max-width: 900px;
   margin: 20px auto;
-  background: var(--card-bg-light);
   padding: 30px;
   border-radius: 48px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  background-color: var(--menu-bg);
+  color: var(--text);
 }
 
 textarea,
@@ -74,10 +53,13 @@ input[type="text"],
   padding: 12px;
   font-size: 1rem;
   border-radius: 8px;
-  border: 1px solid #ccc;
   margin: 10px 0;
   box-sizing: border-box;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text);
 }
+
 
 button {
   padding: 10px 20px;
@@ -86,7 +68,7 @@ button {
   border-radius: 8px;
   cursor: pointer;
   background-color: var(--button-bg);
-  color: white;
+  color: var(--text);
   margin: 5px;
 }
 
@@ -99,16 +81,13 @@ button:hover {
   margin: 20px 0;
   font-size: 1.2rem;
   padding: 16px;
-  background: #eef;
+  background: var(--card-color);
   border-left: 4px solid var(--accent);
   border-radius: 8px;
   transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
 }
 
-[data-theme="dark"] #card {
-  background-color: #3a3a4a;
-  border-left-color: var(--accent);
-}
+
 
 #confirm-area {
   margin-top: 20px;
@@ -129,7 +108,7 @@ select { /* same as button, different background */
   border-radius: 8px;
   cursor: pointer;
   background-color: var(--select-bg);
-  color: white;
+  color: var(--text);
   margin: 5px;
 }
 
@@ -146,19 +125,17 @@ select:hover {
   margin: 5px 5px 0 0;
 }
 
-#theme-toggle {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  padding: 6px 12px;
-  font-size: 0.9rem;
-  background-color: #444;
+
+#home-btn:hover {
+  background-color: #4444;
+  transition: background-color 0.3s ease;
 }
+
 #home-btn {
   position: fixed;
   top: 10px;
   right: 140px;
   padding: 6px 12px;
   font-size: 0.9rem;
-  background-color: #444;
+  background-color: #5555;
 }
