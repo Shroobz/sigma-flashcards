@@ -1,4 +1,5 @@
 
+
 let sessionStarted = false;
 // script.js
 let cards = [];
@@ -50,7 +51,7 @@ function parseInput(text) {
 
 function updateProgress() {
   progressEl.textContent = `Remaining: ${cards.length}`;
-  localStorage.setItem('flashcard-session', JSON.stringify(cards));
+  localStorage.setItem('flashcard-session', JSON.stringify(zip(cards)));
 }
 
 function animateOutAndNext(callback) {
@@ -69,18 +70,22 @@ function animateOutAndNext(callback) {
     answerInput.focus();
   }, 400);
 }
-
-function nextCard() {
+let previous = "";
+function nextCard(correct = false) {
   if (!sessionStarted) return;
-  console.log(cards.length)
   if (cards.length === 0) {
     localStorage.removeItem('flashcard-session');
     testInterface.innerHTML = '<h2 style="text-align:center;">Well done! All cards completed.</h2>';
     homeBtnArea.style.display = 'block';
     return;
   }
-  updateProgress();
-  currentIndex = Math.floor(Math.random() * cards.length);
+  updateProgress(); 
+  let old = previous;
+  for (let i = 0; i < 100; i++) { // "wah wah i can do it better!!!" 
+    currentIndex = Math.floor(Math.random() * cards.length);
+    if (old != cards[currentIndex].term) break;
+  }
+  previous = cards[currentIndex].term; // "wah wah wah what about sessions!!!"
   currentTermEl.textContent = cards[currentIndex].term;
   answerInput.value = '';
   answerInput.focus();
@@ -96,7 +101,7 @@ submitBtn.addEventListener('click', () => {
   let withBracketsAns = correctAns.toLowerCase().replace(/\s/g, '').replace("(", "").replace(")", "");
   let withBracketsUserAns = userAns.toLowerCase().replace(/\s/g, '').replace("(", "").replace(")", "")
   if (withBracketsUserAns == withBracketsAns || withoutBracketsUserAns == withoutBracketsAns) {
-    cards.splice(currentIndex, 1);
+    cards.splice(currentIndex,1);
     animateOutAndNext(nextCard);
   } else {
     confirmText.textContent = `Your answer: "${userAns}". Is this correct for '${correctAns}'`;
@@ -125,7 +130,6 @@ deleteListBtn.addEventListener('click', () => {
     save = JSON.parse(save);
     for (let i = 0; i < save.length; i++) {
       if (save[i].name == name) {
-        console.log("deleting at " + i)
         save.splice(i,1)
         break;
       }
@@ -143,8 +147,8 @@ document.addEventListener('keydown', e => {
 });
 
 confirmYes.addEventListener('click', () => {
-  cards.splice(currentIndex, 1);
   confirmArea.style.display = 'none';
+  cards.splice(currentIndex,1);
   animateOutAndNext(nextCard);
 });
 
@@ -155,13 +159,16 @@ confirmNo.addEventListener('click', () => {
 });
 
 startBtn.addEventListener('click', () => {
-  console.log("hi")
+  let len = rawInput.value.length;
+  if (len > 250000 && !confirm("you sure?")) return;
   cards = parseInput(rawInput.value);
+  if (cards.length > 1000 && !confirm("you ain't gonna learn anything with " + cards.length + " cards bro")) return;
+  if (cards.length > 25000 && !confirm("you realize your entire pc is gonna die from saving all those cards to localstorage (for the resume stuff)")) return;
   if (cards.length === 0) {
     alert('No valid entries found. Use format term = definition per line.');
     return;
   }
-  localStorage.setItem('flashcard-session', JSON.stringify(cards));
+  localStorage.setItem('flashcard-session', JSON.stringify(zip(cards)));
   inputArea.style.display = 'none';
   testInterface.style.display = 'block';
   sessionStarted = true;
@@ -169,7 +176,7 @@ startBtn.addEventListener('click', () => {
 });
 
 resumeBtn.addEventListener('click', () => {
-  const sessionData = localStorage.getItem('flashcard-session');
+  const sessionData = unzip(localStorage.getItem('flashcard-session'));
   if (!sessionData) {
     alert("No saved session found.");
     return;
@@ -217,7 +224,6 @@ function saveList(name, content) {
     save = JSON.parse(save)
     save.push(input)
   }
-  console.log(save)
   localStorage.setItem("lists", JSON.stringify(save))
   loadSavedListNames();
 }
@@ -257,7 +263,6 @@ function getAllCookieNames() {
 
 function loadSavedListNames(exclude) {
   if (document.cookie != "" && localStorage.getItem("lists") == null) {
-    console.log("shit how i do")
     let cookies = document.cookie.split(';').map(c => decodeURIComponent(c.trim().split('=')[0]));
     let save = localStorage.getItem("lists");
     save = (save == null) ? [] : JSON.parse(save)
@@ -299,3 +304,76 @@ saveListBtn.addEventListener('click', () => {
 
 loadSavedListNames();
 
+
+// basically just 12x faster, idk how
+
+// Apply LZW-compression to a string and return base64 compressed string.
+function zip(s) {
+  try {
+    var dict = {};
+    var data = (s + "").split("");
+    var out = [];
+    var currChar;
+    var phrase = data[0];
+    var code = 256;
+    for (var i = 1; i < data.length; i++) {
+      currChar = data[i];
+      if (dict[phrase + currChar] != null) {
+        phrase += currChar;
+      } else {
+        out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+        dict[phrase + currChar] = code;
+        code++;
+        phrase = currChar;
+      }
+    }
+    out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+    for (var j = 0; j < out.length; j++) {
+      out[j] = String.fromCharCode(out[j]);
+    }
+    return utoa(out.join(""));
+  } catch (e) {
+    console.log("Failed to zip string return empty string", e);
+    return "";
+  }
+}
+
+// Decompress an LZW-encoded base64 string
+function unzip(base64ZippedString) {
+  try {
+    var s = atou(base64ZippedString);
+    var dict = {};
+    var data = (s + "").split("");
+    var currChar = data[0];
+    var oldPhrase = currChar;
+    var out = [currChar];
+    var code = 256;
+    var phrase;
+    for (var i = 1; i < data.length; i++) {
+      var currCode = data[i].charCodeAt(0);
+      if (currCode < 256) {
+        phrase = data[i];
+      } else {
+        phrase = dict[currCode] ? dict[currCode] : oldPhrase + currChar;
+      }
+      out.push(phrase);
+      currChar = phrase.charAt(0);
+      dict[code] = oldPhrase + currChar;
+      code++;
+      oldPhrase = phrase;
+    }
+    return out.join("");
+  } catch (e) {
+    console.log("Failed to unzip string return empty string", e);
+    return "";
+  }
+}
+
+// ucs-2 string to base64 encoded ascii
+function utoa(str) {
+  return window.btoa(unescape(encodeURIComponent(str)));
+}
+// base64 encoded ascii to ucs-2 string
+function atou(str) {
+  return decodeURIComponent(escape(window.atob(str)));
+}
