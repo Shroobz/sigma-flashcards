@@ -183,18 +183,21 @@ resumeBtn.addEventListener('click', () => {
 
 homeBtn.addEventListener('click', () => {
   if (sessionStarted == true) {
-    inputArea.style.display = 'block';
-    testInterface.style.display = 'none';
-    sessionStarted = false;
-    cards = [];
-    currentIndex = -1;
-    rawInput.value = '';
-    listNameInput.value = '';
-    answerInput.value = '';
-    confirmArea.style.display = 'none';
-    homeBtnArea.style.display = 'none';
-    progressEl.textContent = '';
-    loadSavedListNames();
+    if (cards.length == 0) window.location.reload()
+    else {
+      inputArea.style.display = 'block';
+      testInterface.style.display = 'none';
+      sessionStarted = false;
+      cards = [];
+      currentIndex = -1;
+      rawInput.value = '';
+      listNameInput.value = '';
+      answerInput.value = '';
+      confirmArea.style.display = 'none';
+      homeBtnArea.style.display = 'none';
+      progressEl.textContent = '';
+      loadSavedListNames();
+    }
   } else {
 
     window.location.href = "https://shroobz.github.io/"
